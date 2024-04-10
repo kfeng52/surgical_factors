@@ -8,13 +8,13 @@ df = pd.read_csv(file_path)
 
 
 
-# FUNCTIONS
+### FUNCTIONS
 
 # Removes rows with certain values 
 def remove_rows_with_value(df, column_name, value):
     return df[df[column_name] == value]
 
-# ANALYSIS 
+### ANALYSIS 
 df = remove_rows_with_value(df, 'survey_questions_complete', 2)
 
 file_path = 'clean_data.csv'
