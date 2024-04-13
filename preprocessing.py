@@ -17,5 +17,7 @@ def remove_rows_with_value(df, column_name, value):
 ### ANALYSIS 
 df = remove_rows_with_value(df, 'survey_questions_complete', 2)
 
+
+
 file_path = 'clean_data.csv'
 df.to_csv(file_path, index=False)  # Setting index=False to not write row indices to the CSV file

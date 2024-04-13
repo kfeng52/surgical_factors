@@ -17,18 +17,26 @@ def calculate_mean_median(df, column_name):
     print(f'The mean of {column_name} is {mean} and the meddian is {median}')
     return mean, median
 
+
+
 ### ANALYSIS 
 
+# Number of samples
 print(f'The number of sample is {len(df)}')
 
 demo_mean, demo_median = calculate_mean_median(df, )
 
-'''
 
+
+
+'''
 Demographic
 Age
 Male female distribution
 Years in medical school
 
 '''
+
+
+
 
