@@ -209,7 +209,7 @@ def comparison_binary(df, column_name, x_labels=None, separate_column=None, labe
     stats_group_0 = calculate_stats(group_0, column_name)
     stats_group_1 = calculate_stats(group_1, column_name)
 
-    independent_ttest_seperator(df, 'jr_sr', column_name)
+    independent_ttest_seperator(df, separate_column, column_name)
 
 
 def create_word_document_from_df(df, additional_info_header, additional_info_text, header_columns, text_columns, output_filename):
@@ -242,29 +242,5 @@ def create_word_document_from_df(df, additional_info_header, additional_info_tex
     
     # Save the document
     doc.save(output_filename)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
