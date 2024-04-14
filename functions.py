@@ -248,39 +248,6 @@ def create_word_document_from_df(df, additional_info_header, additional_info_tex
 
 
 
-### ANALYSIS 
-
-# # Number of samples
-# print(f'The number of sample is {len(df)}')
-
-# # Age 
-# age_mean, age_median, age_std = calculate_stats(df, 'age')
-
-# # Gender 
-# single_column(df, 'gender', ['Female', 'Male', 'Non-binary'])
-
-# # Ethnicity
-# list_ethnicity = ['race_culture___1', 'race_culture___2', 'race_culture___3', 'race_culture___4', 'race_culture___5', 'race_culture___6', 'race_culture___8', 'race_culture___9', 'race_culture___11', 'race_culture___13', 'race_culture___14', 'race_culture___15', 'race_culture___16', 'race_culture___999', 'race_culture___17', 'race_culture___18'
-# ]
-# names_ethnicity = ['East Asian', 'South Asian', 'Southeast Asian', 'Black African', 'Black Caribbean', 'Black North American','Indian Caribbean', 'Indigenous', 'Latin American', 'Middle Eastern', 'White European', 'White North American', 'Mixed Heritage', 'Other', 'Prefer not to answer', 'Do not know']
-# multi_columns(df, list_ethnicity, names_ethnicity)
-
-# # Med Year 
-# single_column(df, 'med_year')
-
-# # Have Children
-# single_column(df, 'children', ['No', 'Yes'])
-
-# # Intend to purse surgerical specialty 
-# single_column(df, 'specialty', ['No', 'Yes'])
-
-
-
-# # Text Responses (Do wish to pursue surgical speciality)
-# create_word_document_from_df(df[df['specialty'] == 0], ['Age', 'Gender (1=F, 2=M)', 'Surgical speciality? (0=no, 1=yes)'], ['Why not pursue surgery?', 'What needs to change?'], ['age', 'gender', 'specialty'], ['specialty_reason','specialty_change'], 'responses_no_pursue_surgery.docx')
-
-# # Text Response (Do not wish to pursue surgical speciality)
-# create_word_document_from_df(df[df['specialty'] == 1], ['Age', 'Gender (1=F, 2=M)', 'Surgical speciality? (0=no, 1=yes)'], ['Why pursue surgery?', 'What needs to change?'], ['age', 'gender', 'specialty'], ['specialty_reason','specialty_change'], 'responses_yes_pursue_surgery.docx')
 
 
 
