@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # File path of your CSV file
-file_path = "clean_data.csv"
+file_path = "./surgical_factors/clean_data.csv"
 
 # Use pandas to read the CSV file and load it into a DataFrame
 df = pd.read_csv(file_path)
