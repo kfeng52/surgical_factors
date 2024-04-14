@@ -227,17 +227,21 @@ def create_word_document_from_df(df, additional_info_header, additional_info_tex
         # Combine header parts into a single header string
         header = ' - '.join(header_parts)
         
-        # Add header as a paragraph to the document
-        doc.add_heading(header, level=1)
-        
-        # Iterate through text columns
-        for info, col in zip(additional_info_text, text_columns):
-            # Add additional info followed by text content as a paragraph
-            text_content = f"{info} - {row[col]}\n"
-            doc.add_paragraph(text_content)
-        
-        # Add two empty paragraphs after all text columns
-        doc.add_paragraph('')
+        # Check if any of the text columns for the current row are not NaN
+        if not row[text_columns].isnull().all():
+            # Add header as a paragraph to the document
+            doc.add_heading(header, level=1)
+            
+            # Iterate through text columns
+            for info, col in zip(additional_info_text, text_columns):
+                # Check if the current text column is not NaN
+                if not pd.isnull(row[col]):
+                    # Add additional info followed by text content as a paragraph
+                    text_content = f"{info} - {row[col]}\n"
+                    doc.add_paragraph(text_content)
+            
+            # Add two empty paragraphs after all text columns
+            doc.add_paragraph('')
     
     # Save the document
     doc.save(output_filename)
