@@ -135,8 +135,7 @@ def multi_columns(df, columns, custom_labels=None, plot_show = False):
 
 
 
-# Double bar plot comparison with a seperator (for data like, JR vs SR workload)
-def comparison_binary(df, column_name, x_labels=None, separate_column=None, label_0=None, label_1=None, plot_show = False):
+def comparison_binary(df, column_name, x_labels=None, separate_column=None, label_0=None, label_1=None, plot_show=False):
     if separate_column is None:
         print("Separate column not provided. Please provide a column name containing values of 0 or 1.")
         return
@@ -146,7 +145,7 @@ def comparison_binary(df, column_name, x_labels=None, separate_column=None, labe
     group_1 = df[df[separate_column] == 1]
 
     # Get all unique values in the specified column
-    unique_values = df[column_name].unique()
+    unique_values = df[column_name].dropna().unique()
     unique_values.sort()
 
     # Count the frequency of each value in the specified column for each group
@@ -154,14 +153,14 @@ def comparison_binary(df, column_name, x_labels=None, separate_column=None, labe
     value_counts_1 = group_1[column_name].value_counts().reindex(unique_values, fill_value=0)
 
     # Print statements
-    print("Group 0:")
+    print(f"Group {label_0}:")
     print(value_counts_0)
-    print("\nGroup 1:")
+    print(f"\nGroup {label_1}:")
     print(value_counts_1)
 
-    # Remove values with count of 0
-    value_counts_0 = value_counts_0[value_counts_0 != 0]
-    value_counts_1 = value_counts_1[value_counts_1 != 0]
+    # # Remove values with count of 0
+    # value_counts_0 = value_counts_0[value_counts_0 != 0]
+    # value_counts_1 = value_counts_1[value_counts_1 != 0]
 
     if len(value_counts_0) == 0 or len(value_counts_1) == 0:
         print("One or both groups have all counts as zero. No bars to plot.")
@@ -202,7 +201,7 @@ def comparison_binary(df, column_name, x_labels=None, separate_column=None, labe
     plt.legend()
 
     # Show the plot
-    if plot_show == True:
+    if plot_show:
         plt.show()
 
     # Calculate statistics for both groups
