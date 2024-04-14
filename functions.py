@@ -39,7 +39,7 @@ def independent_ttest_seperator(df, seperator, column):
     # Perform independent t-test
     t_stat, p_value = st.ttest_ind(group1, group2)
 
-    print(f'tstat = {t_stat}, p_value = {p_value}')
+    print(f'tstat = {t_stat}, p_value = {p_value}\n')
     return t_stat, p_value
 
 
@@ -50,7 +50,7 @@ def create_binary_column(df, source_column, threshold, new_column_name):
 
 
 # Normals frequency plot
-def plot_frequency(df, column_name, x_labels=None):
+def single_column(df, column_name, x_labels=None, plot_show = False):
     # Get all unique values in the column
     unique_values = df[column_name].unique()
     unique_values.sort()
@@ -89,12 +89,15 @@ def plot_frequency(df, column_name, x_labels=None):
     plt.ylim(0, max(value_counts.values) * 1.1)
 
     # Show the plot
-    plt.show()
+    if plot_show == True:
+        plt.show()
+
+    calculate_stats(df, column_name)
 
 
 
 # specifically for multiple columns histograms
-def plot_ethnicity_frequencies(df, columns, custom_labels=None):
+def multi_columns(df, columns, custom_labels=None, plot_show = False):
     # Extract the specified ethnicity columns from the DataFrame
     ethnicity_data = df[columns]
 
@@ -126,12 +129,14 @@ def plot_ethnicity_frequencies(df, columns, custom_labels=None):
 
     # Show the plot
     plt.tight_layout()  # Adjust the layout to prevent label overlap
-    plt.show()
+    # Show the plot
+    if plot_show == True:
+        plt.show()
 
 
 
 # Double bar plot comparison with a seperator (for data like, JR vs SR workload)
-def plot_frequency_comparison(df, column_name, x_labels=None, separate_column=None, label_0=None, label_1=None):
+def comparison_binary(df, column_name, x_labels=None, separate_column=None, label_0=None, label_1=None, plot_show = False):
     if separate_column is None:
         print("Separate column not provided. Please provide a column name containing values of 0 or 1.")
         return
@@ -197,34 +202,43 @@ def plot_frequency_comparison(df, column_name, x_labels=None, separate_column=No
     plt.legend()
 
     # Show the plot
-    plt.show()
+    if plot_show == True:
+        plt.show()
 
     # Calculate statistics for both groups
     stats_group_0 = calculate_stats(group_0, column_name)
     stats_group_1 = calculate_stats(group_1, column_name)
 
-    return stats_group_0, stats_group_1
+    independent_ttest_seperator(df, 'jr_sr', column_name)
 
-def text_responses(df, header_columns, text_columns, output_filename):
+
+def create_word_document_from_df(df, additional_info_header, additional_info_text, header_columns, text_columns, output_filename):
     # Create a new Document
     doc = Document()
     
     # Iterate through each row of the DataFrame
     for index, row in df.iterrows():
-        # Extract data from the specified header columns and the text columns
+        # Initialize a list to store the parts of the header
         header_parts = []
-        for col in header_columns:
-            header_parts.append(str(row[col]))
+        
+        # Iterate through additional_info_header and header_columns simultaneously
+        for info, header_col in zip(additional_info_header, header_columns):
+            header_parts.append(f"{info} {row[header_col]}")
+        
+        # Combine header parts into a single header string
         header = ' - '.join(header_parts)
         
-        text_parts = []
-        for col in text_columns:
-            text_parts.append(str(row[col]))
-        text_response = ' - '.join(text_parts)
-        
-        # Add header and text response as a paragraph to the document
+        # Add header as a paragraph to the document
         doc.add_heading(header, level=1)
-        doc.add_paragraph(text_response)
+        
+        # Iterate through text columns
+        for info, col in zip(additional_info_text, text_columns):
+            # Add additional info followed by text content as a paragraph
+            text_content = f"{info} - {row[col]}\n"
+            doc.add_paragraph(text_content)
+        
+        # Add two empty paragraphs after all text columns
+        doc.add_paragraph('')
     
     # Save the document
     doc.save(output_filename)
@@ -233,54 +247,110 @@ def text_responses(df, header_columns, text_columns, output_filename):
 
 
 
+
 ### ANALYSIS 
 
-# Number of samples
-print(f'The number of sample is {len(df)}')
+# # Number of samples
+# print(f'The number of sample is {len(df)}')
 
 # # Age 
-# age_mean, age_median, age_std = stats(df, 'age')
+# age_mean, age_median, age_std = calculate_stats(df, 'age')
 
 # # Gender 
-# plot_frequency(df, 'gender', ['Female', 'Male', 'Non-binary'])
+# single_column(df, 'gender', ['Female', 'Male', 'Non-binary'])
 
 # # Ethnicity
 # list_ethnicity = ['race_culture___1', 'race_culture___2', 'race_culture___3', 'race_culture___4', 'race_culture___5', 'race_culture___6', 'race_culture___8', 'race_culture___9', 'race_culture___11', 'race_culture___13', 'race_culture___14', 'race_culture___15', 'race_culture___16', 'race_culture___999', 'race_culture___17', 'race_culture___18'
 # ]
 # names_ethnicity = ['East Asian', 'South Asian', 'Southeast Asian', 'Black African', 'Black Caribbean', 'Black North American','Indian Caribbean', 'Indigenous', 'Latin American', 'Middle Eastern', 'White European', 'White North American', 'Mixed Heritage', 'Other', 'Prefer not to answer', 'Do not know']
-# plot_ethnicity_frequencies(df, list_ethnicity, names_ethnicity)
+# multi_columns(df, list_ethnicity, names_ethnicity)
 
 # # Med Year 
-# plot_frequency(df, 'med_year')
+# single_column(df, 'med_year')
 
 # # Have Children
-# plot_frequency(df, 'children', ['No', 'Yes'])
+# single_column(df, 'children', ['No', 'Yes'])
 
 # # Intend to purse surgerical specialty 
-# plot_frequency(df, 'specialty', ['No', 'Yes'])
-
-
-# Text Responses
-text_responses(df, ['age', 'gender'], [specialty_reason], output_filename)
+# single_column(df, 'specialty', ['No', 'Yes'])
 
 
 
+# # Text Responses (Do wish to pursue surgical speciality)
+# create_word_document_from_df(df[df['specialty'] == 0], ['Age', 'Gender (1=F, 2=M)', 'Surgical speciality? (0=no, 1=yes)'], ['Why not pursue surgery?', 'What needs to change?'], ['age', 'gender', 'specialty'], ['specialty_reason','specialty_change'], 'responses_no_pursue_surgery.docx')
 
-
+# # Text Response (Do not wish to pursue surgical speciality)
+# create_word_document_from_df(df[df['specialty'] == 1], ['Age', 'Gender (1=F, 2=M)', 'Surgical speciality? (0=no, 1=yes)'], ['Why pursue surgery?', 'What needs to change?'], ['age', 'gender', 'specialty'], ['specialty_reason','specialty_change'], 'responses_yes_pursue_surgery.docx')
 
 
 
 ##JR vs SR  
 df = create_binary_column(df, 'med_year', 2, 'jr_sr')
 
+# Family Compatibility 
+comparison_binary(df, 'family_compatible', separate_column='jr_sr', label_0='JR', label_1='SR')
 
-plot_frequency_comparison(df, 'workload_det', separate_column='jr_sr', label_0='JR', label_1='SR')
+# Concerns about family is deterrent
+comparison_binary(df, 'family_concerns_det', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Workload is deterrent 
+comparison_binary(df, 'workload_det', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Number of extra years deterrent
+comparison_binary(df, 'add_training_det', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Stress deterrent
+comparison_binary(df, 'stress_levels_det', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Mentorship deterrent
+comparison_binary(df, 'mentor_barrier', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Family/spouse barrier
+comparison_binary(df, 'family_support', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Exposure enough
+comparison_binary(df, 'enough_exposure', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Equal gender representation training programs
+comparison_binary(df, 'equal_rep_res', separate_column='jr_sr', label_0='JR', label_1='SR')
+
+# Equal gender representation surgical programs 
+comparison_binary(df, 'equal_rep_atten', separate_column='jr_sr', label_0='JR', label_1='SR')
 
 
 
+##Male vs Female  
+df = create_binary_column(df, 'gender', 1, 'f_m')
 
+# Family Compatibility 
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
 
+# Concerns about family is deterrent
+comparison_binary(df, 'family_concerns_det', separate_column='f_m', label_0='Female', label_1='Male')
 
+# Workload is deterrent 
+comparison_binary(df, 'workload_det', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Number of extra years deterrent
+comparison_binary(df, 'add_training_det', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Stress deterrent
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Mentorship deterrent
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Family/spouse barrier
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Exposure enough
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Equal gender representation training programs
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
+
+# Equal gender representation surgical programs 
+comparison_binary(df, 'family_compatible', separate_column='f_m', label_0='Female', label_1='Male')
 
 
 
