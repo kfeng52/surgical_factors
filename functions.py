@@ -18,9 +18,11 @@ def calculate_stats(df, column_name):
     column_data = df[column_name]
     mean = column_data.mean()
     median = column_data.median()
+    mode = column_data.mode()[0]  # Get the first mode as mode() returns a Series
     std = column_data.std()
-    print(f'The mean of {column_name} is {mean}, the median is {median}, and the standard deviation is {std}')
-    return mean, median, std
+    print(f'The mean of {column_name} is {mean}, the median is {median}, the mode is {mode}, and the standard deviation is {std}')
+    return mean, median, mode, std
+
 
 # T-test without a seperator 
 def independent_ttest(group1, group2):
